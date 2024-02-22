@@ -1,0 +1,8 @@
+{
+  "appId": "com.example.app",
+  "appName": "sae6",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
