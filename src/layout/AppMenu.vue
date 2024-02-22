@@ -6,9 +6,12 @@ import AppMenuItem from './AppMenuItem.vue';
 const model = ref([
     {
         label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
-    },
-    {
+        items: [
+            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
+            { label: 'Scan QR code', icon: 'pi pi-fw pi-qrcode', to: '/pages/QRCode' }
+        ]
+    }
+    /* {
         label: 'UI Components',
         items: [
             { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
@@ -166,7 +169,7 @@ const model = ref([
                 icon: 'pi pi-fw pi-star'
             }
         ]
-    }
+    }*/
 ]);
 </script>
 
