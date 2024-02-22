@@ -8,7 +8,7 @@ const router = createRouter({
             path: '/',
             component: AppLayout,
             children: [
-                /*{
+                {
                     path: '/',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
@@ -140,7 +140,7 @@ const router = createRouter({
                     path: '/documentation',
                     name: 'documentation',
                     component: () => import('@/views/utilities/Documentation.vue')
-                },*/
+                },
                 {
                     path: '/pages/QRCode',
                     name: 'crud',
