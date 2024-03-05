@@ -14,6 +14,11 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
+                    path: '/panier',
+                    name: 'panier',
+                    component: () => import('@/views/pages/CodeBar.vue')
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')
@@ -143,7 +148,7 @@ const router = createRouter({
                 },
                 {
                     path: '/pages/QRCode',
-                    name: 'crud',
+                    name: 'Depot',
                     component: () => import('@/views/pages/QRCode.vue')
                 }
             ]

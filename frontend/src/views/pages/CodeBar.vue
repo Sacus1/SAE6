@@ -2,9 +2,7 @@
 import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader';
 import { Camera } from '@capacitor/camera';
 import { onMounted, ref } from 'vue';
-import { sendQRcode } from '@/api/backendApi';
-import { useRouter } from 'vue-router';
-const router = useRouter();
+import { sendBarcode } from '@/api/backendApi';
 const qrError = ref('');
 const qrContent = ref('');
 const isCameraReady = ref(false);
@@ -20,19 +18,7 @@ const QRCode = {
 
 function onDetect(content) {
     qrContent.value = content;
-    // if there is "jardin" in the content , go back to the dashboard.
-    if (content.rawValue.includes('jardin')) {
-        router.push('/');
-        return;
-    }
-    sendQRcode(content.rawValue)
-        .then(() => {
-            // change page to CodeBar.vue
-            router.push('/panier');
-        })
-        .catch((error) => {
-            qrError.value = error;
-        });
+    sendBarcode(content.rawValue);
 }
 function onError(error) {
     qrError.value = error;
@@ -60,9 +46,8 @@ onMounted(() => {
 </script>
 <template>
     <div className="card">
-        <h5>Scan QR code</h5>
-        <p>Use this page to scan QR code.</p>
-        <QrcodeStream format="['qr-code']" v-if="isCameraReady" ref="qrcodeStreamRef" :paused="pausedRef" @detect="onDetect" @error="onError"></QrcodeStream>
+        <h5>Scan code bar sur les paniers</h5>
+        <QrcodeStream format="['bar-code']" v-if="isCameraReady" ref="qrcodeStreamRef" :paused="pausedRef" @detect="onDetect" @error="onError"></QrcodeStream>
         <p v-else>Requesting camera permission...</p>
         <p>{{ qrError }}</p>
     </div>
