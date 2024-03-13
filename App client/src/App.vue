@@ -4,6 +4,7 @@ import {
 
 } from '@capacitor/push-notifications';
 import { onMounted, ref } from 'vue';
+import { sendToken } from "@/api/backendApi";
 
 onMounted( async () => {
   PushNotifications.requestPermissions().then(result => {
@@ -17,7 +18,13 @@ onMounted( async () => {
 
   PushNotifications.addListener('registration',
     (token) => {
-      alert('Push registration success, token: ' + token.value);
+      sendToken(token.value)
+        .then(() => {
+          console.log('Token sent');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   );
 

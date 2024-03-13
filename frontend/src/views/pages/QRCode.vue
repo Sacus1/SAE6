@@ -22,31 +22,27 @@ const QRCode = {
         QrcodeCapture
     }
 };
-
-async function onDetect(content) {
-  console.log(content);
+ function onDetect(content) {
     qrContent.value = content[0];
     // if there is "jardin" in the content , go back to the dashboard.
     if (content[0].rawValue.includes('jardin')) {
-        await router.push('/');
+        router.push('/');
         return;
     }
-    let depot;
-    await fetchDepotById(content[0].rawValue)
+    fetchDepotById(parseInt(content[0].rawValue, 10))
         .then((response) => {
-            depot = response;
+          sendQRcode(65)
+            .then(() => {
+              console.log('QR code sent');
+            })
+            .catch((error) => {
+              qrError.value = error;
+            });
         })
         .catch((error) => {
             qrError.value = error;
         });
-  sendQRcode(depot)
-        .then(() => {
-            // change page to CodeBar.vue
-            router.push('/panier');
-        })
-        .catch((error) => {
-            qrError.value = error;
-        });
+
 }
 function onError(error) {
     qrError.value = error;
