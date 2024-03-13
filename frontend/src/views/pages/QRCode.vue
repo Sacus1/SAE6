@@ -4,6 +4,7 @@ import { Camera } from '@capacitor/camera';
 import { onMounted, ref } from 'vue';
 import { sendQRcode } from '@/api/backendApi';
 import { useRouter, useRoute } from 'vue-router';
+import { fetchDepotById } from "@/api/api";
 const router = useRouter();
 const route = useRoute();
 const qrError = ref('');
@@ -22,14 +23,23 @@ const QRCode = {
     }
 };
 
-function onDetect(content) {
-    qrContent.value = content;
+async function onDetect(content) {
+  console.log(content);
+    qrContent.value = content[0];
     // if there is "jardin" in the content , go back to the dashboard.
-    if (content.rawValue.includes('jardin')) {
-        router.push('/');
+    if (content[0].rawValue.includes('jardin')) {
+        await router.push('/');
         return;
     }
-    sendQRcode(content.rawValue)
+    let depot;
+    await fetchDepotById(content[0].rawValue)
+        .then((response) => {
+            depot = response;
+        })
+        .catch((error) => {
+            qrError.value = error;
+        });
+  sendQRcode(depot)
         .then(() => {
             // change page to CodeBar.vue
             router.push('/panier');

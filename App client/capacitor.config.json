@@ -1,5 +1,5 @@
 {
-  "appId": "com.sae6.app",
+  "appId": "com.sae6.appClient",
   "appName": "capacitor-sae6",
   "webDir": "dist",
   "server": {
