@@ -12,7 +12,7 @@ const layoutConfig = reactive({
 
 const layoutState = reactive({
     staticMenuDesktopInactive: false,
-    overlayMenuActive: false,
+    overlayMenuActive: true,
     profileSidebarVisible: false,
     configSidebarVisible: false,
     staticMenuMobileActive: false,

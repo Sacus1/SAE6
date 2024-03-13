@@ -14,8 +14,13 @@ const router = createRouter({
                     component: () => import('@/views/pages/Tournees.vue')
                 },
                 {
+                    path: '/tournees/:id',
+                    name: 'depots',
+                    component: () => import('@/views/pages/Depots.vue')
+                },
+                {
                     path: '/tournees/:id/QRCode',
-                    name: 'depot',
+                    name: 'qrcode',
                     component: () => import('@/views/pages/QRCode.vue')
                 },
                 {
