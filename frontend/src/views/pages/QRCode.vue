@@ -3,13 +3,17 @@ import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader';
 import { Camera } from '@capacitor/camera';
 import { onMounted, ref } from 'vue';
 import { sendQRcode } from '@/api/backendApi';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 const router = useRouter();
+const route = useRoute();
 const qrError = ref('');
 const qrContent = ref('');
 const isCameraReady = ref(false);
 const qrcodeStreamRef = ref(null);
 const pausedRef = ref(false);
+
+// console.log(route.params.id);
+
 const QRCode = {
     components: {
         QrcodeStream,

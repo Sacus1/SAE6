@@ -1,8 +1,8 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes: [
         {
             path: '/',
@@ -10,11 +10,16 @@ const router = createRouter({
             children: [
                 {
                     path: '/',
-                    name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
+                    name: 'tournees',
+                    component: () => import('@/views/pages/Tournees.vue')
                 },
                 {
-                    path: '/panier',
+                    path: '/tournees/:id/QRCode',
+                    name: 'depot',
+                    component: () => import('@/views/pages/QRCode.vue')
+                },
+                {
+                    path: '/tournees/:id/panier',
                     name: 'panier',
                     component: () => import('@/views/pages/CodeBar.vue')
                 },
@@ -145,11 +150,6 @@ const router = createRouter({
                     path: '/documentation',
                     name: 'documentation',
                     component: () => import('@/views/utilities/Documentation.vue')
-                },
-                {
-                    path: '/pages/QRCode',
-                    name: 'Depot',
-                    component: () => import('@/views/pages/QRCode.vue')
                 }
             ]
         },
@@ -157,11 +157,6 @@ const router = createRouter({
             path: '/landing',
             name: 'landing',
             component: () => import('@/views/pages/Landing.vue')
-        },
-        {
-            path: '/pages/notfound',
-            name: 'notfound',
-            component: () => import('@/views/pages/NotFound.vue')
         },
 
         {
@@ -178,6 +173,11 @@ const router = createRouter({
             path: '/auth/error',
             name: 'error',
             component: () => import('@/views/pages/auth/Error.vue')
+        },
+        {
+            path: '/:catchAll(.*)',
+            name: 'notfound',
+            component: () => import('@/views/pages/NotFound.vue')
         }
     ]
 });
