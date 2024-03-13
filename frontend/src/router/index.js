@@ -24,7 +24,7 @@ const router = createRouter({
                     component: () => import('@/views/pages/CodeBar.vue')
                 },
                 {
-                    path: '/pages/maps',
+                    path: '/tournees/:id/maps',
                     name: 'maps',
                     component: () => import('@/views/pages/Maps.vue')
                 },
