@@ -1,17 +1,35 @@
 <script setup>
-import { onMounted, nextTick } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-const router = useRouter();
+import { nextTick, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import L from "leaflet";
+import "leaflet-routing-machine";
+import 'leaflet-polylinedecorator'
+import { fetchAdresseById, fetchDepotById, fetchDistributionByTournee } from "@/api/api"; // Assuming you've installed and imported it
 const route = useRoute();
-import L from 'leaflet';
-import 'leaflet-routing-machine';
-import { fetchDistributionByTournee, fetchDepotById, fetchAdresseById } from '@/api/api'; // Assuming you've installed and imported it
 
 onMounted(async () => {
     await nextTick();
+  let points = [];
+    // create the map
+    const map = L.map('map');
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    map.locate({ setView: true, maxZoom: 16 });
+    map.on('locationfound', (e) => {
+      const radius = e.accuracy / 2;
+      L.marker(e.latlng)
+        .addTo(map)
+        .bindPopup('You are within ' + radius + ' meters from this point')
+        .openPopup();
+      L.circle(e.latlng, radius).addTo(map);
+      points.push([e.latlng.lat, e.latlng.lng]);
+    });
+    map.on('locationerror', (e) => {
+      console.log(e);
+    });
     // get tournee id from the url
-    let points = [];
-    let center = [0, 0];
     fetchDistributionByTournee(route.params.id).then(async (tournee) => {
         if (tournee) {
             for (let i = 0; i < tournee.length; i++) {
@@ -22,8 +40,6 @@ onMounted(async () => {
                             adresse = adresse[0];
                             if (adresse) {
                                 points.push([adresse['localisation']['coordinates'][1], adresse['localisation']['coordinates'][0]]);
-                                center[0] += adresse['localisation']['coordinates'][1];
-                                center[1] += adresse['localisation']['coordinates'][0];
                             }
                         });
                     }
@@ -33,36 +49,41 @@ onMounted(async () => {
 
         // sort the points
         points = solveTSP(points);
-        // create the map
-        const map = L.map('map').setView([center[0] / points.length, center[1] / points.length], 13);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
 
         // Ensure the map instance is ready before adding routing
-        L.Routing.control({
+      let routingControl =L.Routing.control({
             waypoints: points.map((point) => L.latLng(point[0], point[1])),
             plan: L.Routing.plan(
                 points.map((point) => L.latLng(point[0], point[1])),
                 {
                     createMarker: function (i, wp, nWps) {
-                        return L.marker(wp.latLng, {
-                            draggable: false,
-                            addWaypoints: false,
-                            icon: L.icon({
-                                iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                                iconSize: [25, 41],
-                                iconAnchor: [12, 41],
-                                popupAnchor: [1, -34],
-                                shadowSize: [41, 41]
-                            })
+                      return L.marker(wp.latLng, {
+                          draggable: false,
+                          addWaypoints: false,
+                          icon: L.icon({
+                            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41],
+                            popupAnchor: [1, -34],
+                            shadowSize: [41, 41]
+                          })
                         });
                     }
                 }
             )
         }).addTo(map);
+        routingControl.on('routesfound', function(e) {
+          let routes = e.routes;
+          let decorator = L.polylineDecorator(routes[0].coordinates, {
+            patterns: [
+              {offset: '0%', repeat: 50, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, pathOptions:
+                    {stroke: true}})}
+            ]
+          }).addTo(map);
+        });
+
     });
 });
 function calculateDistance(a, b) {
@@ -101,7 +122,6 @@ function solveTSP(points) {
         currentPoint = remainingPoints[nearest.index];
         remainingPoints = remainingPoints.filter((_, index) => index !== nearest.index);
     }
-
 
     return path;
 }
