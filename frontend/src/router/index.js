@@ -19,6 +19,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/CodeBar.vue')
                 },
                 {
+                    path: '/pages/maps',
+                    name: 'maps',
+                    component: () => import('@/views/pages/Maps.vue')
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')
