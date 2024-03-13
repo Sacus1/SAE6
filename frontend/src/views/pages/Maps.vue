@@ -1,7 +1,8 @@
 <script setup>
 import { onMounted, nextTick } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 const router = useRouter();
+const route = useRoute();
 import L from 'leaflet';
 import 'leaflet-routing-machine';
 import { fetchDistributionByTournee, fetchDepotById, fetchAdresseById } from '@/api/api'; // Assuming you've installed and imported it
@@ -11,7 +12,7 @@ onMounted(async () => {
     // get tournee id from the url
     let points = [];
     let center = [0, 0];
-    fetchDistributionByTournee(1).then(async (tournee) => {
+    fetchDistributionByTournee(route.params.id).then(async (tournee) => {
         if (tournee) {
             for (let i = 0; i < tournee.length; i++) {
                 await fetchDepotById(tournee[i]['depot_id']).then(async (depot) => {
@@ -30,7 +31,8 @@ onMounted(async () => {
             }
         }
 
-
+        // sort the points
+        points = solveTSP(points);
         // create the map
         const map = L.map('map').setView([center[0] / points.length, center[1] / points.length], 13);
 
@@ -41,7 +43,8 @@ onMounted(async () => {
         // Ensure the map instance is ready before adding routing
         L.Routing.control({
             waypoints: points.map((point) => L.latLng(point[0], point[1])),
-            plan: L.Routing.plan(points.map((point) => L.latLng(point[0], point[1])),
+            plan: L.Routing.plan(
+                points.map((point) => L.latLng(point[0], point[1])),
                 {
                     createMarker: function (i, wp, nWps) {
                         return L.marker(wp.latLng, {
@@ -58,17 +61,55 @@ onMounted(async () => {
                         });
                     }
                 }
-            ),
-
+            )
         }).addTo(map);
     });
 });
+function calculateDistance(a, b) {
+    // Haversine distance formula
+    const [lat1, lon1] = a;
+    const [lat2, lon2] = b;
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const lat1Rad = lat1 * (Math.PI / 180);
+    const lat2Rad = lat2 * (Math.PI / 180);
+
+    a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1Rad) * Math.cos(lat2Rad);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+}
+
+function findNearestNeighbor(currentPoint, points) {
+    return points.reduce(
+        (nearest, point, index) => {
+            const distance = calculateDistance(currentPoint, point);
+            return distance < nearest.distance ? { index, distance } : nearest;
+        },
+        { index: -1, distance: Infinity }
+    );
+}
+
+function solveTSP(points) {
+    const path = [points[0]]; // Start from the first point
+    let currentPoint = points[0];
+    let remainingPoints = points.slice(1);
+
+    while (remainingPoints.length > 0) {
+        const nearest = findNearestNeighbor(currentPoint, remainingPoints);
+        path.push(remainingPoints[nearest.index]);
+        currentPoint = remainingPoints[nearest.index];
+        remainingPoints = remainingPoints.filter((_, index) => index !== nearest.index);
+    }
+
+
+    return path;
+}
 </script>
 <template>
     <div className="card">
         <h5>Carte livraison</h5>
         <div id="map" style="height: 600px"></div>
-        <div id="itinerary"></div>
     </div>
 </template>
 <style>
