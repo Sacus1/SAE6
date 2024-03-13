@@ -146,4 +146,22 @@ router.route("/:adhesionId").delete(async (req, res) => {
   });
 });
 
+router.route("/qrcode").post(async (req, res) => {
+    const  depotId= req.body;
+    //TODO set depot timestamp to the database
+
+    const query = "UPDATE `Depot` SET `timestamp` = ? WHERE `idDepot` = ?";
+    connection.execute(query, [DateTime.now(), depotId], async (err, result) => {
+        if (err) {
+            return res.status(500
+                ).send(err);
+        }
+        // Depot timestamp updated successfully
+        res.status(200).send("Depot timestamp updated successfully");
+    }
+    );
+    // send notification to the client
+
+});
+
 module.exports = router;
