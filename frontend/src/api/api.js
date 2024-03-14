@@ -12,6 +12,7 @@ export const fetchTournees = async () => {
         throw error;
     }
 };
+/*
 
 export const fetchDepotsByTourneeId = async (id) => {
     try {
@@ -56,7 +57,49 @@ export const fetchDepotsByTourneeId = async (id) => {
         throw error;
     }
 };
+*/
+export const fetchDepotsByTourneeId = async (tourneeId) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/distributions`, {
+            headers: { apikey: apiKey },
+            params: {
+                tournee_id: 'eq.' + tourneeId,
+                select: 'depot_id,depots(depot),livraisons(abonnement_id,abonnements(panier_id,nombre))'
+            }
+        });
+        const data = response.data;
+        let depots = [];
 
+        // Process the response data to aggregate counts
+        data.forEach(distribution => {
+            const depotName = distribution.depots.depot;
+            let nombreSimple = 0, nombreFamilial = 0, nombreFruite = 0;
+            distribution.livraisons.forEach(livraison => {
+                const { panier_id, nombre } = livraison.abonnements;
+                // Assuming panier_id directly corresponds to the type of basket
+                if ([1, 2, 5].includes(panier_id)) nombreSimple += nombre;
+                if ([3, 4, 6].includes(panier_id)) nombreFamilial += nombre;
+                if ([7, 8, 9].includes(panier_id)) nombreFruite += nombre;
+                console.log('panier_id:', panier_id, 'nombre:', nombre);
+            });
+
+            // Aggregate the total count for the depot
+            const nombrePaniers = nombreSimple + nombreFamilial + nombreFruite;
+            depots.push({
+                depot: depotName,
+                nombrePaniers,
+                nombreSimple,
+                nombreFamilial,
+                nombreFruite
+            });
+        });
+
+        return depots;
+    } catch (error) {
+        console.error('Optimized fetch failed:', error);
+        throw error;
+    }
+};
 export const fetchDistributionByTournee = async (id) => {
     try {
         const response = await axios.get(`${BASE_URL}/distributions`, { headers: { apikey: apiKey }, params: { tournee_id: 'eq.' + id } });
