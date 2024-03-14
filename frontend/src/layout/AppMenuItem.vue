@@ -50,7 +50,7 @@ const itemClick = (event, item) => {
     }
 
     const { overlayMenuActive, staticMenuMobileActive } = layoutState;
-
+    onMenuToggle
     if ((item.to || item.url) && (staticMenuMobileActive.value || overlayMenuActive.value)) {
         onMenuToggle();
     }
