@@ -33,7 +33,6 @@ onMounted(async () => {
   // get tournee id from the url
   // sort the points
   points = solveTSP(await GetLocalisationsByTournee(route.params.id));
-  console.log(points);
 
   // Ensure the map instance is ready before adding routing
   let routingControl = L.Routing.control({
