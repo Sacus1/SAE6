@@ -113,7 +113,7 @@ function solveTSP(points) {
 }
 </script>
 <template>
-  <div className="card">
+  <div className="card col-offset-1">
     <h5>Carte livraison</h5>
     <div id="map" style="height: 600px"></div>
   </div>
