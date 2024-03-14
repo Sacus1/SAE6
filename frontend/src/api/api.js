@@ -22,7 +22,6 @@ export const fetchDepotsByTourneeId = async (tourneeId) => {
             }
         });
         const data = response.data;
-        console.log(data);
         let depots = [];
 
         data.forEach((distribution) => {
@@ -40,7 +39,6 @@ export const fetchDepotsByTourneeId = async (tourneeId) => {
                     if ([1, 2, 5].includes(panier_id)) nombreSimple += nombre;
                     if ([3, 4, 6].includes(panier_id)) nombreFamilial += nombre;
                     if ([7, 8, 9].includes(panier_id)) nombreFruite += nombre;
-                    console.log(abonnement_id);
                     uniqueAbonnements.add(abonnement_id);
                 }
             });
