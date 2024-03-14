@@ -45,8 +45,8 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div className="card">
-        <h5>Scan code bar sur les paniers</h5>
+    <div class="card col-offset-1">
+        <h5>Scan du code barre des paniers</h5>
         <QrcodeStream format="['bar-code']" v-if="isCameraReady" ref="qrcodeStreamRef" :paused="pausedRef" @detect="onDetect" @error="onError"></QrcodeStream>
         <p v-else>Requesting camera permission...</p>
         <p>{{ qrError }}</p>
