@@ -24,16 +24,16 @@ function goToQRCode(){
 
 <template>
     
-    <div class="card">
+    <div class=" col-offset-1">
         <div class=" flex justify-content-center">
-            <Button @click="goToQRCode" class="w-2 h-3rem mb-5" label="QRCode Scanner"></Button>
+            <Button @click="goToQRCode" class="h-3rem mb-5" label="QRCode Scanner"></Button>
         </div>
-        <DataTable showGridlines :value="depots" tableStyle="min-width: 50rem">
-            <Column field="depot" header="Depot" bodyClass="text-center"></Column>
-            <Column field="nombrePaniers" header="Paniers a livrer" bodyClass="text-center"></Column>
-            <Column field="nombreSimple" header="Paniers simples" bodyClass="text-center"></Column>
-            <Column field="nombreFamilial" header="Paniers familiaux" bodyClass="text-center"></Column>
-            <Column field="nombreFruite" header="Paniers fruits" bodyClass="text-center"></Column>
+        <DataTable showGridlines rowsPerPageOptions="4" :value="depots" tableStyle="min-width: 10rem; font-size: .6rem;">
+            <Column field="depot" header="Depot" ></Column>
+            <Column field="nombrePaniers" header="Paniers a livrer"></Column>
+            <Column field="nombreSimple" header="Paniers simples" ></Column>
+            <Column field="nombreFamilial" header="Paniers familiaux" ></Column>
+            <Column field="nombreFruite" header="Paniers fruits" ></Column>
         </DataTable>
     </div>
 </template>
