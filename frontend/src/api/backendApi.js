@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = "http://s-argus.com:3001";
+const BASE_URL = "http://51.91.76.245:3001";
 export const sendQRcode = async (data) => {
     try {
         const response = await axios.post(`${BASE_URL}/qrcode`, data);

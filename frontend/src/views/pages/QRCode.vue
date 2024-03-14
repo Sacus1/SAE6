@@ -23,6 +23,7 @@ const QRCode = {
     }
 };
  function onDetect(content) {
+   console.log(content);
     qrContent.value = content[0];
     // if there is "jardin" in the content , go back to the dashboard.
     if (content[0].rawValue.includes('jardin')) {
@@ -31,8 +32,10 @@ const QRCode = {
     }
     fetchDepotById(parseInt(content[0].rawValue, 10))
         .then((response) => {
-          sendQRcode(65)
+          sendQRcode(response )
             .then(() => {
+              // redirect to code bar
+              router.push( 'panier');
               //console.log('QR code sent');
             })
             .catch((error) => {
