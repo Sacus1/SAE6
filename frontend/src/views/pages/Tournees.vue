@@ -28,7 +28,7 @@ function onClickSelectionner(){
 
 
 <template>
-    <div class="col-offset-2">
+    <div class="col-offset-1">
         <div class="card p-fluid">
             <h5>Liste des tournées</h5>
             <div class="field grid">
