@@ -68,22 +68,29 @@ export const fetchDepotsByTourneeId = async (tourneeId) => {
             }
         });
         const data = response.data;
+        console.log(data);
         let depots = [];
 
-        // Process the response data to aggregate counts
-        data.forEach(distribution => {
+        data.forEach((distribution) => {
             const depotName = distribution.depots.depot;
-            let nombreSimple = 0, nombreFamilial = 0, nombreFruite = 0;
-            distribution.livraisons.forEach(livraison => {
-                const { panier_id, nombre } = livraison.abonnements;
-                // Assuming panier_id directly corresponds to the type of basket
-                if ([1, 2, 5].includes(panier_id)) nombreSimple += nombre;
-                if ([3, 4, 6].includes(panier_id)) nombreFamilial += nombre;
-                if ([7, 8, 9].includes(panier_id)) nombreFruite += nombre;
-                console.log('panier_id:', panier_id, 'nombre:', nombre);
+            let nombreSimple = 0,
+                nombreFamilial = 0,
+                nombreFruite = 0;
+
+            const uniqueAbonnements = new Set();
+
+            distribution.livraisons.forEach((livraison) => {
+                const abonnement_id = livraison.abonnement_id;
+                if (!uniqueAbonnements.has(abonnement_id)) {
+                    const { panier_id, nombre } = livraison.abonnements;
+                    if ([1, 2, 5].includes(panier_id)) nombreSimple += nombre;
+                    if ([3, 4, 6].includes(panier_id)) nombreFamilial += nombre;
+                    if ([7, 8, 9].includes(panier_id)) nombreFruite += nombre;
+                    console.log(abonnement_id);
+                    uniqueAbonnements.add(abonnement_id);
+                }
             });
 
-            // Aggregate the total count for the depot
             const nombrePaniers = nombreSimple + nombreFamilial + nombreFruite;
             depots.push({
                 depot: depotName,
@@ -100,6 +107,7 @@ export const fetchDepotsByTourneeId = async (tourneeId) => {
         throw error;
     }
 };
+
 export const fetchDistributionByTournee = async (id) => {
     try {
         const response = await axios.get(`${BASE_URL}/distributions`, { headers: { apikey: apiKey }, params: { tournee_id: 'eq.' + id } });
