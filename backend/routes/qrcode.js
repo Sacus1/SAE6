@@ -9,27 +9,71 @@ admin.initializeApp({
 });
 router.route("/").post(async (req, res) => {
     const  depot= req.body;
-    //TODO set depot timestamp to the database
+    console.log(depot);
+    // check if the depot exists
+    let query = "SELECT * FROM `depot` WHERE depot = ?";
+    connection.query(query, [depot[0].depot], (err, result) => {
+        if (err) {
+            res.status(500).send("Error retrieving depot");
+        } else {
+            if (result.length === 0) {
+                // insert the depot
+                query = "INSERT INTO `depot` (id,arrival) VALUES (?,?)";
+                connection.query(query, [depot[0].depot, DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss")], (err, result) => {
+                    if (err) {
+                        res.status(500).send("Error inserting depot");
+                    }
+                });
+            } else {
+                // update the depot
+                query = "UPDATE `depot` SET arrival = ? WHERE depot = ?";
+                connection.query(query, [DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss"), depot[0].depot], (err, result) => {
+                    if (err) {
+                        res.status(500).send("Error updating depot");
+                    }
+                });
+            }
+        }
+    });
+    // send notification to the clients
+    query = "SELECT token FROM `Client`";
+    connection.query(query, (err, result) => {
+        if (err) {
+            res.status(500).send("Error retrieving clients");
+        } else {
+            console.log(result);
+            result.forEach((client) => {
+                const message = {
+                    notification: {
+                        title: 'Un panier a été déposé',
+                        body: 'Un panier a été déposé au point de dépôt ' +depot[0].depot,
+                    },
+                    token: client.token,
+                };
 
-    // send notification to the client
-    const message = {
-        notification: {
-            title: 'Un panier a été déposé',
-            body: 'Un panier a été déposé au point de dépôt ' + depot.depot,
-        },
-        token: 'BPMkEIhlITBB46RkNhm4EV47aYOwDQxDdlFz7JjcUOdbowyw-Lkxjxp-ewLYTSuX0OFQUm2Ql-5rkbSuwb5YXTg',
-    };
-
-    admin.messaging().send(message)
-        .then((response) => {
-            // Response is a message ID string
-            console.log('Successfully sent message:', response);
-        })
-        .catch((error) => {
-            console.log('Error sending message:', error);
-        });
-
+                admin.messaging().send(message)
+                    .then((response) => {
+                        // Response is a message ID string
+                        console.log('Successfully sent message:', response);
+                    })
+                    .catch((error) => {
+                        console.log('Error sending message:', error);
+                    });
+            });
+        }
+    });
     res.status(200).send("Notification sent successfully");
 });
 
+router.route("/").get(async (req, res) => {
+    //TODO get all depots
+    console.log("get all depots");
+    connection.query("SELECT * FROM depot", (err, result) => {
+        if (err) {
+            res.status(500).send("Error retrieving depots");
+        } else {
+            res.status(200).send(result);
+        }
+    });
+});
 module.exports = router;
