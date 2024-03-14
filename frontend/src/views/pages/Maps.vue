@@ -27,7 +27,7 @@ onMounted(async () => {
       points.push([e.latlng.lat, e.latlng.lng]);
     });
     map.on('locationerror', (e) => {
-      console.log(e);
+      //console.log(e);
     });
     // get tournee id from the url
     fetchDistributionByTournee(route.params.id).then(async (tournee) => {

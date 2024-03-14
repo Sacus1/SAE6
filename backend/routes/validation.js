@@ -4,7 +4,6 @@ const connection = require("../database/database");
 const { DateTime } = require("luxon");
 router.route("/").post(async (req, res) => {
   const { token, typeAdhesionId, jardinId } = req.body;
-  console.log(req.body);
   // Utilize the token to retrieve the client’s ID
   const queryUserId = "SELECT idClient FROM `Client` WHERE token = ?";
   connection.execute(queryUserId, [token], async (err, userRows) => {
@@ -144,6 +143,5 @@ router.route("/:adhesionId").delete(async (req, res) => {
     );
   });
 });
-
 
 module.exports = router;

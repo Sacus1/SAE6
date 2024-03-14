@@ -12,12 +12,13 @@ const tourneeChoisie = ref('');
 onMounted(async () => {
     // Fetch tournees
     const tourneesData = await fetchTournees();
+    //console.log(tourneesData)
     tourneesData.sort((a, b) => a.tournee_id - b.tournee_id);
     tournees.value.push(...tourneesData);
 });
 
 function onClickSelectionner(){
-    console.log(tourneeChoisie.value)
+    //console.log(tourneeChoisie.value)
     if(tourneeChoisie.value){
         router.push(`/tournees/${tourneeChoisie.value}`);
     }

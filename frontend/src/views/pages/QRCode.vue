@@ -33,7 +33,7 @@ const QRCode = {
         .then((response) => {
           sendQRcode(65)
             .then(() => {
-              console.log('QR code sent');
+              //console.log('QR code sent');
             })
             .catch((error) => {
               qrError.value = error;
@@ -69,11 +69,8 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div className="card">
-        <h5>Scan QR code</h5>
-        <p>Use this page to scan QR code.</p>
+        <h5>QRCode Scanner</h5>
         <QrcodeStream format="['qr-code']" v-if="isCameraReady" ref="qrcodeStreamRef" :paused="pausedRef" @detect="onDetect" @error="onError"></QrcodeStream>
         <p v-else>Requesting camera permission...</p>
         <p>{{ qrError }}</p>
-    </div>
 </template>
