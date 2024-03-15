@@ -18,13 +18,14 @@ export const fetchDepotsByTourneeId = async (tourneeId) => {
             headers: { apikey: apiKey },
             params: {
                 tournee_id: 'eq.' + tourneeId,
-                select: 'depot_id,depots(depot),livraisons(abonnement_id,abonnements(panier_id,nombre))'
+                select: 'ordre,depot_id,depots(depot),livraisons(abonnement_id,abonnements(panier_id,nombre))'
             }
         });
         const data = response.data;
         let depots = [];
 
         data.forEach((distribution) => {
+            const ordreDistribution = distribution.ordre;
             const depotName = distribution.depots.depot;
             let nombreSimple = 0,
                 nombreFamilial = 0,
@@ -45,11 +46,12 @@ export const fetchDepotsByTourneeId = async (tourneeId) => {
 
             const nombrePaniers = nombreSimple + nombreFamilial + nombreFruite;
             depots.push({
+                ordre: ordreDistribution,
                 depot: depotName,
-                nombrePaniers,
-                nombreSimple,
-                nombreFamilial,
-                nombreFruite
+                nombrePaniers: nombrePaniers,
+                nombreSimple: nombreSimple,
+                nombreFamilial: nombreFamilial,
+                nombreFruite: nombreFruite
             });
         });
 
@@ -97,12 +99,13 @@ export const GetLocalisationsByTournee = async (tourneeId) => {
             headers: { apikey: apiKey },
             params: {
                 tournee_id: 'eq.' + tourneeId,
-                select: 'depots(depot_id,adresses(adresse_id,localisation))'
+                select: 'ordre,depots(depot_id,adresses(adresse_id,localisation))'
             }
         });
         const distributions = response.data;
         let points = [];
-
+        distributions.sort((a, b) => a.ordre - b.ordre);
+        console.log(distributions);
         distributions.forEach((distribution) => {
             if (distribution.depots && distribution.depots.adresses) {
                 const adresse = distribution.depots.adresses;
