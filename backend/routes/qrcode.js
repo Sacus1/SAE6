@@ -9,19 +9,22 @@ admin.initializeApp({
 });
 router.route("/").post(async (req, res) => {
     const  depot= req.body;
-    console.log(depot);
     // check if the depot exists
     let query = "SELECT * FROM `depot` WHERE depot = ?";
     connection.query(query, [depot[0].depot], (err, result) => {
         if (err) {
-            res.status(500).send("Error retrieving depot");
+            if (!res.headersSent) {
+                res.status(500).send("Error retrieving depots");
+            }
         } else {
             if (result.length === 0) {
                 // insert the depot
                 query = "INSERT INTO `depot` (id,arrival) VALUES (?,?)";
                 connection.query(query, [depot[0].depot, DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss")], (err, result) => {
                     if (err) {
-                        res.status(500).send("Error inserting depot");
+                        if (!res.headersSent) {
+                            return res.status(500).send("Error inserting depot");
+                        }
                     }
                 });
             } else {
@@ -29,26 +32,31 @@ router.route("/").post(async (req, res) => {
                 query = "UPDATE `depot` SET arrival = ? WHERE depot = ?";
                 connection.query(query, [DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss"), depot[0].depot], (err, result) => {
                     if (err) {
-                        res.status(500).send("Error updating depot");
+                        if (!res.headersSent) {
+                        return res.status(500).send("Error updating depot");
+                        }
                     }
                 });
             }
         }
     });
     // send notification to the clients
-    query = "SELECT token FROM `Client`";
+    query = "SELECT vapidKey FROM `Client`";
     connection.query(query, (err, result) => {
         if (err) {
-            res.status(500).send("Error retrieving clients");
+            if (!res.headersSent)
+           return res.status(500).send("Error retrieving clients");
+            else {
+                return;
+            }
         } else {
-            console.log(result);
             result.forEach((client) => {
                 const message = {
                     notification: {
                         title: 'Un panier a été déposé',
                         body: 'Un panier a été déposé au point de dépôt ' +depot[0].depot,
                     },
-                    token: client.token,
+                    token: client.vapidKey,
                 };
 
                 admin.messaging().send(message)
@@ -62,7 +70,7 @@ router.route("/").post(async (req, res) => {
             });
         }
     });
-    res.status(200).send("Notification sent successfully");
+    return res.status(200).send("Notification sent successfully");
 });
 
 router.route("/").get(async (req, res) => {
