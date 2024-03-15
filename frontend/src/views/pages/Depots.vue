@@ -33,8 +33,9 @@ function goToMaps(){
             <Button @click="goToQRCode" class="h-3rem mb-5 mr-2" label="QRCode Scanner"></Button>
             <Button @click="goToMaps" class="h-3rem mb-5" label="Livraison"></Button>
         </div>
-        <DataTable showGridlines :value="depots" tableStyle="min-width: 10rem; font-size: .6rem;">
-            <Column field="depot" header="Depot" ></Column>
+        <DataTable showGridlines :value="depots" tableStyle="min-width: 10rem; font-size: .5rem;">
+            <Column field="ordre" header="Ordre" ></Column>
+            <Column field="depot" header="Depots" ></Column>
             <Column field="nombrePaniers" header="Paniers a livrer"></Column>
             <Column field="nombreSimple" header="Paniers simples" ></Column>
             <Column field="nombreFamilial" header="Paniers familiaux" ></Column>
