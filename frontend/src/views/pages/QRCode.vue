@@ -73,7 +73,8 @@ onMounted(() => {
 </script>
 <template>
     <div class="card col-offset-1">
-        <h5>QRCode Scanner</h5>
+        <h5>Dépôt</h5>
+        <h6>Pour enregistrer l'heure d'arrivée , scanner le QRCode du dépôt</h6>
         <QrcodeStream format="['qr-code']" v-if="isCameraReady" ref="qrcodeStreamRef" :paused="pausedRef" @detect="onDetect" @error="onError"></QrcodeStream>
         <p v-else>Requesting camera permission...</p>
         <p>{{ qrError }}</p>

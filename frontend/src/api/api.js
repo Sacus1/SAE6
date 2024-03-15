@@ -99,13 +99,12 @@ export const GetLocalisationsByTournee = async (tourneeId) => {
             headers: { apikey: apiKey },
             params: {
                 tournee_id: 'eq.' + tourneeId,
-                select: 'ordre,depots(depot_id,adresses(adresse_id,localisation))'
+                select: 'ordre,depots(depot_id,adresses(adresse_id,localisation)),tournees(tournee_id,couleur)'
             }
         });
         const distributions = response.data;
         let points = [];
         distributions.sort((a, b) => a.ordre - b.ordre);
-        console.log(distributions);
         distributions.forEach((distribution) => {
             if (distribution.depots && distribution.depots.adresses) {
                 const adresse = distribution.depots.adresses;
@@ -117,7 +116,7 @@ export const GetLocalisationsByTournee = async (tourneeId) => {
                 }
             }
         });
-        return points;
+        return [points, distributions[0].tournees.couleur];
     } catch (error) {
         console.error('Optimized data fetch and processing failed:', error);
         throw error;
