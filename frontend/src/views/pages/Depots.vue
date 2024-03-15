@@ -35,7 +35,7 @@ function goToMaps(){
         </div>
         <DataTable showGridlines :value="depots" tableStyle="min-width: 10rem; font-size: .5rem;">
             <Column field="ordre" header="Ordre" ></Column>
-            <Column field="depot" header="Depots" ></Column>
+            <Column field="depot" header="Dépôts" ></Column>
             <Column field="nombrePaniers" header="Paniers a livrer"></Column>
             <Column field="nombreSimple" header="Paniers simples" ></Column>
             <Column field="nombreFamilial" header="Paniers familiaux" ></Column>

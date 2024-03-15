@@ -38,11 +38,20 @@ function onClickSelectionner(){
             <div class="field grid">
                 <label for="tournees" class="col-12 mb-2 md:col-3">Tournées</label>
                 <div class="col-12 md:col-8">
-                    <Dropdown id="tournees" v-model="tourneeChoisie" :options="tournees" optionLabel="tournee" optionValue="tournee_id" placeholder="Sélectionnez une tournée" />
+                    <Dropdown id="tournees" v-model="tourneeChoisie" :options="tournees" optionLabel="tournee" optionValue="tournee_id" placeholder="Sélectionnez une tournée">
+                        <template #option="{ option }">
+                            <span :style="{ backgroundColor: option.couleur, color: 'white', padding: '4px', borderRadius: '4px', position: 'relative', display: 'inline-block' }">
+                                <span style="position: relative; z-index: 1;">{{ option.tournee }}</span>
+                                <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.3); border-radius: 4px;"></span>
+                            </span>
+                        </template>
+                    </Dropdown>
                 </div>
             </div>
             
-            <Button label="Sélectionner" @click="onClickSelectionner" ></Button>
+            <Button label="Sélectionner" @click="onClickSelectionner"></Button>
         </div>
     </div>
 </template>
+
+
