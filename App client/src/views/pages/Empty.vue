@@ -1,7 +1,10 @@
 <template>
-    <div className="card">
-    </div>
+  <img src="/logo-cocagne.svg" alt="logo" />
 </template>
+
+
+
+
 <script setup>
 import {
   PushNotifications,

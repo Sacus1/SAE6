@@ -11,7 +11,7 @@ const logoUrl = computed(() => {
 
 <template>
     <div class="layout-footer">
-        <img src="public/layout/logo-cocagne.svg" alt="Logo" height="20" class="mr-2" />
+        <img src="/logo-cocagne.svg" alt="Logo" height="20" class="mr-2" />
         by
         <span class="font-medium ml-2">Jardins de Cocagne</span>
     </div>
