@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+var fs = require("fs");
+var https = require("https");
 const corsOptions = {
   //origin: "https://localhost:5173/",
   origin: "*",
@@ -17,7 +19,16 @@ const validationRouter = require("./routes/validation");
 const qrcodeRouter = require("./routes/qrcode");
 app.use("/validation", validationRouter);
 app.use("/qrcode", qrcodeRouter);
-const PORT = 3001;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+https
+  .createServer(
+    {
+      key: fs.readFileSync("server.key"),
+      cert: fs.readFileSync("server.cert"),
+    },
+    app
+  )
+  .listen(3000, function () {
+    console.log(
+      "app listening on port 3000! Go to https://localhost:3000/"
+    );
+  });
