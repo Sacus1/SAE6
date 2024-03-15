@@ -10,15 +10,14 @@ const route = useRoute();
 
 onMounted(async () => {
   await nextTick();
-  let points = [];
   // create the map
   const map = L.map("map");
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap contributors"
   }).addTo(map);
-  map.locate({ setView: true, maxZoom: 16 });
-/*  map.on("locationfound", (e) => {
+  /*map.locate({ setView: true, maxZoom: 16 });
+ map.on("locationfound", (e) => {
     const radius = e.accuracy / 2;
     L.marker(e.latlng)
       .addTo(map)
@@ -32,8 +31,9 @@ onMounted(async () => {
   });*/
   // get tournee id from the url
   // sort the points
-  points = await GetLocalisationsByTournee(route.params.id);
-
+  const data = await GetLocalisationsByTournee(route.params.id);
+  const points = data[0];
+  const color = data[1];
   // Ensure the map instance is ready before adding routing
   let routingControl = L.Routing.control({
     waypoints: points.map((point) => L.latLng(point[0], point[1])),
@@ -55,14 +55,18 @@ onMounted(async () => {
           });
         }
       }
-    )
+    ),
+    // set color of the route
+    lineOptions: {
+      styles: [{ color: color, opacity: 1, weight: 5 }]
+    },
   }).addTo(map);
   routingControl.on("routesfound", function(e) {
     let routes = e.routes;
     let decorator = L.polylineDecorator(routes[0].coordinates, {
       patterns: [
         {
-          offset: "0%", repeat: 50, symbol: L.Symbol.arrowHead({
+          offset: "0%", repeat: 100, symbol: L.Symbol.arrowHead({
             pixelSize: 15, polygon: false, pathOptions:
               { stroke: true }
           })

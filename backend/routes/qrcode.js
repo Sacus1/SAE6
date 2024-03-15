@@ -45,8 +45,8 @@ router.route("/").post(async (req, res) => {
             result.forEach((client) => {
                 const message = {
                     notification: {
-                        title: 'Un panier a été déposé',
-                        body: 'Un panier a été déposé au point de dépôt ' +depot[0].depot,
+                        title: 'Arrivée au dépôt',
+                        body: 'Une livraison est effectuée à' +depot[0].depot,
                     },
                     token: client.token,
                 };
