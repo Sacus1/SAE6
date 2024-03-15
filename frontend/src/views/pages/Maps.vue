@@ -18,7 +18,7 @@ onMounted(async () => {
     attribution: "© OpenStreetMap contributors"
   }).addTo(map);
   map.locate({ setView: true, maxZoom: 16 });
-  map.on("locationfound", (e) => {
+/*  map.on("locationfound", (e) => {
     const radius = e.accuracy / 2;
     L.marker(e.latlng)
       .addTo(map)
@@ -29,10 +29,10 @@ onMounted(async () => {
   });
   map.on("locationerror", (e) => {
     //console.log(e);
-  });
+  });*/
   // get tournee id from the url
   // sort the points
-  points = solveTSP(await GetLocalisationsByTournee(route.params.id));
+  points = await GetLocalisationsByTournee(route.params.id);
 
   // Ensure the map instance is ready before adding routing
   let routingControl = L.Routing.control({
@@ -72,45 +72,6 @@ onMounted(async () => {
   });
 });
 
-function calculateDistance(a, b) {
-  // Haversine distance formula
-  const [lat1, lon1] = a;
-  const [lat2, lon2] = b;
-  const R = 6371; // Earth's radius in km
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const lat1Rad = lat1 * (Math.PI / 180);
-  const lat2Rad = lat2 * (Math.PI / 180);
-
-  a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1Rad) * Math.cos(lat2Rad);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in km
-}
-
-function findNearestNeighbor(currentPoint, points) {
-  return points.reduce(
-    (nearest, point, index) => {
-      const distance = calculateDistance(currentPoint, point);
-      return distance < nearest.distance ? { index, distance } : nearest;
-    },
-    { index: -1, distance: Infinity }
-  );
-}
-
-function solveTSP(points) {
-  const path = [points[0]]; // Start from the first point
-  let currentPoint = points[0];
-  let remainingPoints = points.slice(1);
-
-  while (remainingPoints.length > 0) {
-    const nearest = findNearestNeighbor(currentPoint, remainingPoints);
-    path.push(remainingPoints[nearest.index]);
-    currentPoint = remainingPoints[nearest.index];
-    remainingPoints = remainingPoints.filter((_, index) => index !== nearest.index);
-  }
-
-  return path;
-}
 </script>
 <template>
   <div className="card col-offset-1">

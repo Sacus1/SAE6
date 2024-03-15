@@ -97,12 +97,13 @@ export const GetLocalisationsByTournee = async (tourneeId) => {
             headers: { apikey: apiKey },
             params: {
                 tournee_id: 'eq.' + tourneeId,
-                select: 'depots(depot_id,adresses(adresse_id,localisation))'
+                select: 'ordre,depots(depot_id,adresses(adresse_id,localisation))'
             }
         });
         const distributions = response.data;
         let points = [];
-
+        distributions.sort((a, b) => a.ordre - b.ordre);
+        console.log(distributions);
         distributions.forEach((distribution) => {
             if (distribution.depots && distribution.depots.adresses) {
                 const adresse = distribution.depots.adresses;
